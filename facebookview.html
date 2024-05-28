@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="style.css">
+	<title>Document</title>
+	<style>
+	.inner {
+	display: grid;
+	grid-template-columns: 42px;
+	grid-template-rows: 42px;
+	}
+	.container {
+  	display: grid;
+ 	grid-template-columns: 33px 2ft;
+	grid-template-rows: 40px;
+	grid-row-gap: 5px;
+	}
+        .bttn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            background: rgb(248, 168, 24);
+            border-radius: 10px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 700;
+            transition: background .2s linear;
+            float: center; /* Додаємо float: left для переміщення кнопки вліво */
+        }
+    	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="item">
+			<button class="btn" id="btn7">BACK</button>
+		</div>
+		<div class="item">
+			<button class="btn" id="btn1">500 views - UAH 30</button>
+		</div>
+		<div class="item">
+			<button class="btn" id="btn2">1000 views - UAH 60</button>
+		</div>
+		<div class="item">
+			<button class="btn" id="btn2">10,000 views - UAH 250</button>
+		</div>
+		<div class="item">
+			<button class="btn" id="btn2">50,000 views - UAH 600</button>
+		</div>
+		<div class="item">
+			<button class="btn" id="btn2">100,000 views - UAH 900</button>
+		</div>
+	</div>
+	<div class="usercard" id="usercard">
+		
+	</div>
+	<script>
+    		// Отримуємо кнопку за її id
+    		var btn = document.getElementById('btn7');
+    
+    		// Додаємо обробник подій для кліку на кнопку
+    		btn.addEventListener('click', function() {
+        			// Перехід на іншу сторінку
+        		window.location.href = 'facebook.html';
+    		});
+	</script>
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+	<script src="app.js"></script>
+</body>
+</html>
