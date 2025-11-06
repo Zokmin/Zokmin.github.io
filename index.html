@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Instagram Direct — інтерактивний макет</title>
+<style>
+  :root{
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --muted: #222;
+    --accent: #6c33ff;
+    --sent-text: #ffffff;
+    --recv-bg: #f1f1f1;
+    --header-border: rgba(0,0,0,0.08);
+    --input-bg: #f3f3f3;
+  }
+  body.dark{
+    --bg: #000000;
+    --panel: #0b0b0b;
+    --muted: #e6e6e6;
+    --accent: #7b5cff;
+    --sent-text: #ffffff;
+    --recv-bg: #1a1a1a;
+    --header-border: rgba(255,255,255,0.06);
+    --input-bg: #121212;
+  }
+  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--muted)}
+  .phone{width:412px;max-width:100%;height:844px;margin:18px auto;border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:0 30px 60px rgba(0,0,0,0.12);border:1px solid rgba(0,0,0,0.06);display:flex;flex-direction:column;position:relative}
+  .topbar{height:64px;display:flex;align-items:center;padding:10px 12px;border-bottom:1px solid var(--header-border);background:var(--panel)}
+  .back{font-size:20px;margin-right:10px;cursor:pointer}
+  .avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;margin-right:10px;border:1px solid rgba(0,0,0,0.06)}
+  .avatar img{width:100%;height:100%;object-fit:cover}
+  .user-meta{flex:1}
+  .username{font-weight:600;color:var(--muted);font-size:16px}
+  .sub{font-size:12px;color:var(--muted);opacity:0.6}
+  .header-actions{display:flex;gap:8px;align-items:center}
+  .icon-btn{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid transparent}
+  .icon-btn:hover{background:rgba(0,0,0,0.04)}
+  .chat-area{flex:1;overflow:auto;padding:16px 12px;background:transparent}
+  .row{display:flex;gap:10px;margin:12px 0;align-items:flex-end}
+  .row.recv{justify-content:flex-start}
+  .row.sent{justify-content:flex-end}
+  .bubble{max-width:70%;padding:12px 16px;border-radius:18px;font-size:15px;line-height:1.25;position:relative;box-shadow:0 6px 14px rgba(0,0,0,0.06);cursor:pointer;user-select:text}
+  .bubble.recv{background:var(--recv-bg);color:var(--muted);border-radius:18px 18px 18px 6px}
+  .bubble.sent{background:var(--accent);color:var(--sent-text);border-radius:18px 18px 6px 18px}
+  .composer{height:78px;padding:12px;border-top:1px solid var(--header-border);display:flex;align-items:center;gap:12px;background:var(--panel)}
+  .input{flex:1;padding:12px 14px;border-radius:24px;border:none;background:var(--input-bg);outline:none;font-size:15px;color:var(--muted)}
+  .btn{padding:10px 12px;border-radius:10px;background:var(--accent);color:#fff;border:none;cursor:pointer}
+  .admin-panel{position:fixed;right:18px;bottom:18px;width:320px;background:var(--panel);border:1px solid var(--header-border);padding:12px;border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,0.12);display:flex;flex-direction:column;gap:8px}
+  .admin-toggle{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.18)}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field input[type=text], .field select{padding:8px;border-radius:8px;border:1px solid var(--header-border);background:var(--input-bg);color:var(--muted)}
+  .field input[type=file]{padding:6px}
+  .controls{display:flex;gap:8px;align-items:center}
+  .small-btn{padding:8px;border-radius:8px;border:1px solid var(--header-border);background:transparent;cursor:pointer}
+  .hidden{display:none}
+  /* simple responsive */
+  @media(max-width:520px){.phone{width:100%;height:100vh;margin:0;border-radius:0} .admin-panel{width:90%;right:5%;left:5%} .admin-toggle{right:12px;bottom:12px}}
+</style>
+</head>
+<body>
+  <div class="phone" id="phone">
+    <div class="topbar">
+      <div class="back">←</div>
+      <div class="avatar"><img id="avatarImg" src="https://i.pravatar.cc/150?img=32" alt="avatar"/></div>
+      <div class="user-meta">
+        <div class="username" id="username">_d_i_m_4.i.k</div>
+        <div class="sub" id="status">В мережі</div>
+      </div>
+      <div class="header-actions">
+        <div class="icon-btn" id="callBtn" title="Call">📞</div>
+        <div class="icon-btn" id="videoBtn" title="Video">🎥</div>
+        <div class="icon-btn" id="themeToggle" title="Toggle theme">🌗</div>
+        <div class="icon-btn" id="settingsBtn" title="Settings">⚙️</div>
+      </div>
+    </div>
+
+    <div class="chat-area" id="chat">
+      <!-- sample messages -->
+      <div class="row recv" data-id="m1"><div class="avatar" style="width:36px;height:36px;border-radius:50%;overflow:hidden"><img src="https://i.pravatar.cc/150?img=32"/></div><div class="bubble recv" data-id="m1">Привіт! Натисни, щоб відредагувати</div></div>
+      <div class="row sent" data-id="m2"><div class="bubble sent" data-id="m2">Привіт! Як справи?</div></div>
+    </div>
+
+    <div class="composer">
+      <input id="composerInput" class="input" placeholder="Напишіть повідомлення..." />
+      <button class="btn" id="sendBtn">Надіслати</button>
+    </div>
+  </div>
+
+  <!-- Admin toggle and panel -->
+  <div class="admin-toggle" id="adminToggle">⚙️</div>
+  <div class="admin-panel hidden" id="adminPanel" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong>Адмін панель</strong>
+      <button id="closeAdmin" class="small-btn">Закрити</button>
+    </div>
+    <div class="field">
+      <label>Нікнейм</label><input id="nameInput" type="text" placeholder="_d_i_m_4.i.k" />
+    </div>
+    <div class="field">
+      <label>Аватар (завантажити)</label><input id="avatarInput" type="file" accept="image/*" />
+    </div>
+    <div class="field">
+      <label>Тема</label>
+      <select id="themeSelect"><option value="light">Світла</option><option value="dark">Темна</option></select>
+    </div>
+    <div class="field"><label>Додати повідомлення</label>
+      <input id="adminMsgInput" type="text" placeholder="Текст повідомлення..." />
+      <div class="controls">
+        <select id="adminSender"><option value="sent">Від мене</option><option value="recv">Від співбесідника</option></select>
+        <button id="adminSend" class="btn">Додати</button>
+      </div>
+    </div>
+    <div class="field"><label>Редагувати/Видалити останнє повідомлення</label>
+      <div style="display:flex;gap:8px">
+        <input id="adminEditInput" type="text" placeholder="Новий текст для останнього..." />
+        <button id="adminEditBtn" class="btn">Змінити</button>
+        <button id="adminDeleteBtn" class="small-btn">Видалити</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+// State
+let msgCounter = 3; // for generating ids
+let editingId = null; // if non-null, send will update message with this id
+
+const chat = document.getElementById('chat');
+const composerInput = document.getElementById('composerInput');
+const sendBtn = document.getElementById('sendBtn');
+const adminToggle = document.getElementById('adminToggle');
+const adminPanel = document.getElementById('adminPanel');
+const closeAdmin = document.getElementById('closeAdmin');
+const nameInput = document.getElementById('nameInput');
+const usernameEl = document.getElementById('username');
+const avatarInput = document.getElementById('avatarInput');
+const avatarImg = document.getElementById('avatarImg');
+const themeToggle = document.getElementById('themeToggle');
+const themeSelect = document.getElementById('themeSelect');
+const adminMsgInput = document.getElementById('adminMsgInput');
+const adminSender = document.getElementById('adminSender');
+const adminSend = document.getElementById('adminSend');
+const adminEditInput = document.getElementById('adminEditInput');
+const adminEditBtn = document.getElementById('adminEditBtn');
+const adminDeleteBtn = document.getElementById('adminDeleteBtn');
+
+// Theme
+let theme = localStorage.getItem('ig_theme') || 'light';
+applyTheme(theme);
+themeSelect.value = theme;
+
+function applyTheme(t){
+  theme = t;
+  if(t === 'dark') document.documentElement.classList.add('dark'), document.body.classList.add('dark'); else document.documentElement.classList.remove('dark'), document.body.classList.remove('dark');
+  localStorage.setItem('ig_theme', t);
+}
+
+themeToggle.addEventListener('click', ()=>{
+  applyTheme(theme === 'light' ? 'dark' : 'light');
+  themeSelect.value = theme;
+});
+themeSelect.addEventListener('change', ()=> applyTheme(themeSelect.value));
+
+// Admin panel toggle
+adminToggle.addEventListener('click', ()=>{
+  adminPanel.classList.toggle('hidden');
+  adminPanel.setAttribute('aria-hidden', adminPanel.classList.contains('hidden') ? 'true' : 'false');
+});
+closeAdmin.addEventListener('click', ()=>{ adminPanel.classList.add('hidden'); adminPanel.setAttribute('aria-hidden', 'true'); });
+
+// Avatar change
+avatarInput.addEventListener('change', ()=>{
+  const f = avatarInput.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = e => { avatarImg.src = e.target.result; // update any recv avatars too
+    document.querySelectorAll('.row.recv .avatar img').forEach(img=>img.src = e.target.result);
+  };
+  r.readAsDataURL(f);
+});
+
+// Name change via admin
+nameInput.addEventListener('change', ()=>{ if(nameInput.value.trim()) usernameEl.textContent = nameInput.value.trim(); });
+
+// Add message from admin panel
+adminSend.addEventListener('click', ()=>{
+  const text = adminMsgInput.value.trim();
+  if(!text) return;
+  addMessage(text, adminSender.value);
+  adminMsgInput.value = '';
+});
+
+// Edit last message via admin
+adminEditBtn.addEventListener('click', ()=>{
+  const last = getLastMessageElement();
+  if(!last) return alert('Немає повідомлень');
+  const newText = adminEditInput.value.trim();
+  if(!newText) return;
+  last.textContent = newText;
+  adminEditInput.value = '';
+});
+
+adminDeleteBtn.addEventListener('click', ()=>{
+  const lastRow = getLastRow();
+  if(!lastRow) return alert('Немає повідомлень');
+  lastRow.remove();
+});
+
+function getLastRow(){
+  const rows = chat.querySelectorAll('.row');
+  return rows.length ? rows[rows.length-1] : null;
+}
+function getLastMessageElement(){
+  const lastRow = getLastRow();
+  if(!lastRow) return null;
+  return lastRow.querySelector('.bubble');
+}
+
+// Add message helper
+function addMessage(text, type){
+  const id = 'm'+(msgCounter++);
+  const row = document.createElement('div');
+  row.className = 'row ' + (type==='sent' ? 'sent' : 'recv');
+  row.setAttribute('data-id', id);
+
+  if(type === 'recv'){
+    const avWrap = document.createElement('div');
+    avWrap.className = 'avatar';
+    avWrap.style.width='36px'; avWrap.style.height='36px'; avWrap.style.borderRadius='50%'; avWrap.style.overflow='hidden';
+    const img = document.createElement('img'); img.src = avatarImg.src;
+    avWrap.appendChild(img);
+    row.appendChild(avWrap);
+  }
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ' + (type==='sent' ? 'sent' : 'recv');
+  bubble.setAttribute('data-id', id);
+  bubble.textContent = text;
+  bubble.addEventListener('click', onBubbleClick);
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// Click on bubble: copy to input for editing (user wanted option 2)
+function onBubbleClick(e){
+  const bubble = e.currentTarget;
+  const id = bubble.getAttribute('data-id');
+  const text = bubble.textContent;
+  editingId = id;
+  composerInput.value = text;
+  composerInput.focus();
+  // indicate editing state by changing send button text
+  sendBtn.textContent = 'Оновити';
+}
+// Send / Update logic
+sendBtn.addEventListener('click', ()=>{
+  const text = composerInput.value.trim();
+  if(!text) return;
+  if(editingId){
+    // find bubble with that id and update text
+    const bubble = chat.querySelector('.bubble[data-id="'+editingId+'"]');
+    if(bubble){
+      bubble.textContent = text;
+    }
+    editingId = null;
+    sendBtn.textContent = 'Надіслати';
+    composerInput.value = '';
+    return;
+  }
+  // otherwise add new message from user
+  addMessage(text, 'sent');
+  composerInput.value = '';
+  // simulate reply for demo
+  setTimeout(()=>addMessage('Дякую за повідомлення!', 'recv'), 800 + Math.random()*900);
+});
+
+// allow Enter to send
+composerInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    sendBtn.click();
+  }
+});
+
+// initialize existing bubbles clickable
+document.querySelectorAll('.bubble').forEach(b=>b.addEventListener('click', onBubbleClick));
+
+// ensure scroll at bottom on load
+window.addEventListener('load', ()=>{ chat.scrollTop = chat.scrollHeight; });
+
+</script>
+</body>
+</html>
